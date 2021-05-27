@@ -1,6 +1,6 @@
 target := aarch64-unknown-linux-musl
 zcc := zig cc -target aarch64-linux-musl
-env := RUSTFLAGS=-Clink-args=-Llibs
+env := RUSTFLAGS="-C linker=rust-lld -C link-args=-Llibs"
 
 # .a/.so - static/dynamic linking
 build: libs/libsqlite3.a
