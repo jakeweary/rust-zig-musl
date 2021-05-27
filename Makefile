@@ -17,5 +17,10 @@ lib/lib%.a: lib
 	cd $* && $(zcc) -c $*.c
 	ar crs lib/lib$*.a $*/$*.o
 
+lib/lib%.so: lib
+	cd $* && $(zcc) -fPIC -c $*.c
+	$(zcc) -shared -o lib/lib$*.so $*/$*.o
+
+# .a/.so - static/dynamic linking
 $(bin): lib/libsqlite3.a
 	$(env) cargo build --target $(target)
