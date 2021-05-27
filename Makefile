@@ -1,9 +1,20 @@
-build: sqlite3/libsqlite3.a
-	TARGET_CC="./zcc-musl" RUSTFLAGS="-C link-args=-Lsqlite3" \
-		cargo run --target x86_64-unknown-linux-musl --release
+target := x86_64-unknown-linux-musl
+bin := target/$(target)/debug/rust-zig-musl
+env := TARGET_CC=zcc RUSTFLAGS=-Clink-args=-Llib
 
-sqlite3/libsqlite3.a:
-	cd sqlite3 && \
-		../zcc-musl -c sqlite3.c && \
-		ar cr libsqlite3.a sqlite3.o && \
-		ranlib libsqlite3.a
+run: $(bin)
+	@$(bin)
+
+clean:
+	rm -rf lib sqlite3/*.o
+	cargo clean
+
+lib:
+	mkdir -p $@
+
+lib/lib%.a: lib
+	cd $* && ../zcc -c $*.c
+	ar crs lib/lib$*.a $*/$*.o
+
+$(bin): lib/libsqlite3.a
+	$(env) cargo build --target $(target)
