@@ -1,10 +1,10 @@
-target := x86_64-unknown-linux-musl
-zcc := zig cc -target x86_64-linux-musl
-bin := target/$(target)/debug/rust-zig-musl
+target := aarch64-unknown-linux-musl
+zcc := zig cc -target aarch64-linux-musl
 env := RUSTFLAGS=-Clink-args=-Llibs
 
-run: $(bin)
-	@$(bin)
+# .a/.so - static/dynamic linking
+build: libs/libsqlite3.a
+	$(env) cargo build --target $(target)
 
 clean:
 	rm -rf libs sqlite3/*.o
@@ -20,7 +20,3 @@ libs/lib%.a: libs
 libs/lib%.so: libs
 	cd $* && $(zcc) -fPIC -c *.c
 	$(zcc) -shared -o libs/lib$*.so $*/*.o
-
-# .a/.so - static/dynamic linking
-$(bin): libs/libsqlite3.a
-	$(env) cargo build --target $(target)
