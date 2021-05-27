@@ -1,6 +1,7 @@
 target := x86_64-unknown-linux-musl
+zcc := zig cc -target x86_64-linux-musl
 bin := target/$(target)/debug/rust-zig-musl
-env := TARGET_CC=zcc RUSTFLAGS=-Clink-args=-Llib
+env := RUSTFLAGS=-Clink-args=-Llib
 
 run: $(bin)
 	@$(bin)
@@ -13,7 +14,7 @@ lib:
 	mkdir -p $@
 
 lib/lib%.a: lib
-	cd $* && ../zcc -c $*.c
+	cd $* && $(zcc) -c $*.c
 	ar crs lib/lib$*.a $*/$*.o
 
 $(bin): lib/libsqlite3.a
